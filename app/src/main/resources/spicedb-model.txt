@@ -1,0 +1,24 @@
+definition user {}
+definition tenant {
+	relation administrator: user
+	relation inventory_clerk: user
+	relation inventory_manager: user
+	relation viewer: user
+	relation site_admin: user
+}
+definition purchase_requisition {
+	relation tenant: tenant
+	permission create = tenant->inventory_clerk + tenant->inventory_manager + tenant->administrator
+	permission update = create
+	permission view = tenant->inventory_clerk + tenant->inventory_manager + tenant->viewer + tenant->administrator
+	permission approve = tenant->inventory_manager + tenant->administrator
+}
+definition purchase_order {
+	relation tenant: tenant
+	permission admin = tenant->inventory_manager + tenant->administrator
+	permission create = tenant->inventory_manager
+	permission update = create
+	permission view = tenant->viewer + tenant->inventory_clerk + tenant->inventory_manager + tenant->administrator
+	permission approve = tenant->inventory_manager + tenant->administrator
+	permission reconcile = tenant->inventory_clerk
+}
